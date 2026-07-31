@@ -1,0 +1,64 @@
+# Visual Studio
+**/.vs/
+**/.vscode/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Dynamic Libraries
+*.so
+*.dylib
+*.dll
+
+# Static Libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.ipa
+
+# Visual Studio generated files
+*.xcodeproj
+*.xcworkspace
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Source Art
+**/SourceArt/**/*.png
+**/SourceArt/**/*.tga
+
+# Unreal generated folders
+**/Binaries/**
+**/Build/**
+**/DerivedDataCache/**
+**/Intermediate/**
+**/Saved/**
+
+# Plugins
+**/Plugins/**/Binaries/**
+**/Plugins/**/Intermediate/**
+
+# Keep icon files
+!**/Build/**/*.ico
+
+# Keep PakBlacklist files
+!**/Build/*/PakBlacklist*.txt
+
+# Ignore built lighting data
+*_BuiltData.uasset
