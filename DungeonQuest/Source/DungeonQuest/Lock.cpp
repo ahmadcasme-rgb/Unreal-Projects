@@ -35,3 +35,12 @@ void ALock::Tick(float DeltaTime)
 
 }
 
+void ALock::SetIsKeyPlaced(bool NewIsKeyPlaced)
+{
+}
+
+bool ALock::GetIsKeyPlaced()
+{
+	return false;
+}
+
