@@ -9,6 +9,8 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DungeonQuest.h"
+#include "CollectableItem.h"
+#include "Lock.h"
 
 ADungeonQuestCharacter::ADungeonQuestCharacter()
 {
@@ -58,6 +60,7 @@ void ADungeonQuestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADungeonQuestCharacter::LookInput);
+		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ADungeonQuestCharacter::LookInput);
 
 		//Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ADungeonQuestCharacter::Interact);
@@ -76,7 +79,60 @@ void ADungeonQuestCharacter::Interact()
 
 	FCollisionShape InteractionSphere = FCollisionShape::MakeSphere(InteractionSphereRadius);
 	DrawDebugSphere(GetWorld(), End, InteractionSphereRadius, 20, FColor::Blue, false, 5.0f);
-	//GetWorld()->SweepSingleByChannel();
+
+	FHitResult HitResult;
+	bool HasHit = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, ECC_GameTraceChannel2, InteractionSphere);
+
+	if (HasHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+
+		if (HitActor->ActorHasTag("CollectibleItem"))
+		{
+			//HitActor is a collectable item
+			ACollectableItem* CollectableItem = Cast<ACollectableItem>(HitActor);
+			if (CollectableItem)
+			{
+				ItemList.Add(CollectableItem->ItemName);
+				CollectableItem->Destroy();
+			}
+		}
+		else if (HitActor->ActorHasTag("Lock"))
+		{
+			//HitActor is a Lock item
+			ALock* LockActor = Cast<ALock>(HitActor);
+			if (LockActor)
+			{
+				// 1 - Is Lock Empty
+				if (!LockActor->GetIsKeyPlaced())
+				{
+					// Lock is empty
+					int32 ItemsRemoved = ItemList.RemoveSingle(LockActor->KeyItemName);
+					if (ItemsRemoved)
+					{
+						LockActor->SetIsKeyPlaced(true);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Display, TEXT("KeyItem not in inventory"));
+					}
+				}
+				else
+				{
+					//Lock has a key inside!
+					ItemList.Add(LockActor->KeyItemName);
+					LockActor->SetIsKeyPlaced(false);
+				}
+				// 2 - Do we have KeyItemName in our Item List?
+				// 3 - Remove the Item from our inventory if we have it
+				// 4 - Activate the lock
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("No Actor Hit!"));
+	}
 }
 
 
@@ -92,12 +148,8 @@ void ADungeonQuestCharacter::MoveInput(const FInputActionValue& Value)
 
 void ADungeonQuestCharacter::LookInput(const FInputActionValue& Value)
 {
-	// get the Vector2D look axis
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	// pass the axis values to the aim input
 	DoAim(LookAxisVector.X, LookAxisVector.Y);
-
 }
 
 void ADungeonQuestCharacter::DoAim(float Yaw, float Pitch)
