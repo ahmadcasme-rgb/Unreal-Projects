@@ -64,6 +64,9 @@ void ADungeonQuestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		//Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ADungeonQuestCharacter::Interact);
+
+		//Pause
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ADungeonQuestCharacter::PauseGame);
 	}
 	else
 	{
@@ -180,4 +183,8 @@ void ADungeonQuestCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+void ADungeonQuestCharacter::PauseGame()
+{
+	// Pause functionality will go here
 }

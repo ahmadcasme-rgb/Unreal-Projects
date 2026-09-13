@@ -52,6 +52,10 @@ protected:
 	/** Interact Input Action */
 	UPROPERTY(EditAnywhere, Category = "Input")
 	class UInputAction* InteractAction;
+
+	/** Pause Input Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* PauseAction;
 	
 public:
 	ADungeonQuestCharacter();
@@ -63,6 +67,8 @@ protected:
 
 	/** Called from Input Actions for looking input */
 	void LookInput(const FInputActionValue& Value);
+
+	void PauseGame();
 
 	/** Handles aim inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
