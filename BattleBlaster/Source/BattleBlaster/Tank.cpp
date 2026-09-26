@@ -43,4 +43,14 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATank::MoveInput);
+	}
+}
+
+void ATank::MoveInput(const FInputActionValue& Value)
+{
+	float InputValue = Value.Get<float>();
+	UE_LOG(LogTemp, Display, TEXT("InputValue: %f"), InputValue);
 }
